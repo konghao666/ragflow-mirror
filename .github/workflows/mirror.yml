@@ -1,0 +1,55 @@
+name: Mirror RAGFlow Images to GHCR
+
+on:
+  workflow_dispatch:
+    inputs:
+      ragflow_version:
+        description: 'RAGFlow version (e.g. v0.25.2, nightly)'
+        required: true
+        default: 'v0.25.2'
+      mysql_version:
+        description: 'MySQL version'
+        required: true
+        default: '8.0.39'
+      es_version:
+        description: 'Elasticsearch version'
+        required: true
+        default: '8.11.3'
+      minio_tag:
+        description: 'MinIO full tag (e.g. pgsty/minio:RELEASE.2026-03-25T00-00-00Z)'
+        required: true
+        default: 'pgsty/minio:RELEASE.2026-03-25T00-00-00Z'
+      valkey_version:
+        description: 'Valkey version'
+        required: true
+        default: '8'
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - full: "infiniflow/ragflow:${{ github.event.inputs.ragflow_version }}"
+          - full: "mysql:${{ github.event.inputs.mysql_version }}"
+          - full: "elasticsearch:${{ github.event.inputs.es_version }}"
+          - full: "${{ github.event.inputs.minio_tag }}"
+          - full: "valkey/valkey:${{ github.event.inputs.valkey_version }}"
+
+    steps:
+      - name: Pull image
+        run: docker pull ${{ matrix.image.full }}
+
+      - name: Log in to ghcr.io
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Tag and push
+        run: |
+          docker tag ${{ matrix.image.full }} ghcr.io/konghao666/ragflow-mirror/${{ matrix.image.full }}
+          docker push ghcr.io/konghao666/ragflow-mirror/${{ matrix.image.full }}
