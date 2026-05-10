@@ -55,5 +55,7 @@ jobs:
       - name: Push to ACR
         run: |
           echo "${{ secrets.ACR_PASSWORD }}" | docker login crpi-mhhhjbf3r2akhaj7.cn-chengdu.personal.cr.aliyuncs.com -u ${{ secrets.ACR_USERNAME }} --password-stdin
-          docker tag ${{ matrix.image.full }} crpi-mhhhjbf3r2akhaj7.cn-chengdu.personal.cr.aliyuncs.com/ragflow-mirror-7sad/${{ matrix.image.full }}
-          docker push crpi-mhhhjbf3r2akhaj7.cn-chengdu.personal.cr.aliyuncs.com/ragflow-mirror-7sad/${{ matrix.image.full }}
+          # ACR does not allow slashes in image names, replace / with _
+          ACR_NAME=$(echo "${{ matrix.image.full }}" | sed 's|/|_|g')
+          docker tag ${{ matrix.image.full }} crpi-mhhhjbf3r2akhaj7.cn-chengdu.personal.cr.aliyuncs.com/ragflow-mirror-7sad/$ACR_NAME
+          docker push crpi-mhhhjbf3r2akhaj7.cn-chengdu.personal.cr.aliyuncs.com/ragflow-mirror-7sad/$ACR_NAME
