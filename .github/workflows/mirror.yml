@@ -1,4 +1,4 @@
-name: Mirror RAGFlow Images to GHCR
+name: Mirror RAGFlow Images (GHCR + ACR)
 
 on:
   workflow_dispatch:
@@ -46,10 +46,14 @@ jobs:
       - name: Pull image
         run: docker pull ${{ matrix.image.full }}
 
-      - name: Log in to ghcr.io
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Tag and push
+      - name: Push to GHCR
         run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker tag ${{ matrix.image.full }} ghcr.io/konghao666/ragflow-mirror/${{ matrix.image.full }}
           docker push ghcr.io/konghao666/ragflow-mirror/${{ matrix.image.full }}
+
+      - name: Push to ACR
+        run: |
+          echo "${{ secrets.ACR_PASSWORD }}" | docker login crpi-mhhhjbf3r2akhaj7.cn-chengdu.personal.cr.aliyuncs.com -u ${{ secrets.ACR_USERNAME }} --password-stdin
+          docker tag ${{ matrix.image.full }} crpi-mhhhjbf3r2akhaj7.cn-chengdu.personal.cr.aliyuncs.com/ragflow-mirror-7sad/${{ matrix.image.full }}
+          docker push crpi-mhhhjbf3r2akhaj7.cn-chengdu.personal.cr.aliyuncs.com/ragflow-mirror-7sad/${{ matrix.image.full }}
