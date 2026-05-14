@@ -23,6 +23,10 @@ on:
         description: 'Valkey version'
         required: true
         default: '8'
+      infinity_version:
+        description: 'Infinity version (e.g. v0.7.0-dev7)'
+        required: true
+        default: 'v0.7.0-dev7'
 
 jobs:
   mirror:
@@ -41,6 +45,7 @@ jobs:
           - full: "elasticsearch:${{ github.event.inputs.es_version }}"
           - full: "${{ github.event.inputs.minio_tag }}"
           - full: "valkey/valkey:${{ github.event.inputs.valkey_version }}"
+          - full: "infiniflow/infinity:${{ github.event.inputs.infinity_version }}"
 
     steps:
       - name: Pull image
