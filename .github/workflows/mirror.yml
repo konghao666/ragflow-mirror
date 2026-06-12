@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       ragflow_version:
-        description: 'RAGFlow version (e.g. v0.25.2, nightly)'
+        description: 'RAGFlow version (e.g. v0.26.0, nightly)'
         required: true
-        default: 'v0.25.2'
+        default: 'v0.26.0'
       mysql_version:
         description: 'MySQL version'
         required: true
@@ -24,9 +24,9 @@ on:
         required: true
         default: '8'
       infinity_version:
-        description: 'Infinity version (e.g. v0.7.0-dev7)'
+        description: 'Infinity version (e.g. v0.7.0)'
         required: true
-        default: 'v0.7.0-dev7'
+        default: 'v0.7.0'
       alpine_version:
         description: 'Alpine version (e.g. 3.21)'
         required: true
